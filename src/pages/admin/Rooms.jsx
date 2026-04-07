@@ -18,18 +18,20 @@ export default function AdminRooms() {
           api.get('/rooms')
         ])
         
-        const fetchedHostels = hostelsRes.data.data.hostels || []
-        const fetchedRooms = roomsRes.data.data.rooms || []
+        // DEFENSIVE: Handle different potential response structures from MongoDB
+        const fetchedHostels = hostelsRes.data?.data?.hostels || hostelsRes.data?.hostels || []
+        const fetchedRooms = roomsRes.data?.data?.rooms || roomsRes.data?.rooms || []
         
         setHostels(fetchedHostels)
         setRooms(fetchedRooms)
         
-        if (fetchedHostels.length > 0) {
+        if (fetchedHostels.length > 0 && !selectedBlock) {
           setSelectedBlock(fetchedHostels[0]._id)
         }
         
+        console.log('Room Data Sync Successful:', { hostels: fetchedHostels.length, rooms: fetchedRooms.length });
       } catch (error) {
-        console.error('Error fetching data:', error)
+        console.error('CRITICAL: Error fetching room data from MongoDB:', error.response?.data || error.message)
       } finally {
         setLoading(false)
       }

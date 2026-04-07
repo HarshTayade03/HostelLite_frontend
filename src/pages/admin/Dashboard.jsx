@@ -58,12 +58,19 @@ export default function AdminDashboard() {
           api.get('/users?role=STUDENT'),
           api.get('/payments/all'),
         ])
-        setHostels(hostelsRes.data.data.hostels || [])
-        setRooms(roomsRes.data.data.rooms || [])
-        setUsers(studentsRes.data.data.users || [])
-        setPayments(paymentsRes.data.data.payments || [])
+
+        // DEFENSIVE: Using optional chaining to prevent crashes if the DB structure is slightly different
+        setHostels(hostelsRes.data?.data?.hostels || hostelsRes.data?.hostels || [])
+        setRooms(roomsRes.data?.data?.rooms || roomsRes.data?.rooms || [])
+        setUsers(studentsRes.data?.data?.users || studentsRes.data?.users || [])
+        setPayments(paymentsRes.data?.data?.payments || paymentsRes.data?.payments || [])
+        
+        console.log('MongoDB Data Loaded Successfully:', {
+          hostels: hostelsRes.data,
+          rooms: roomsRes.data
+        });
       } catch (error) {
-        console.error('Error fetching data:', error)
+        console.error('CRITICAL: MongoDB Fetch Error:', error.response?.data || error.message)
       } finally {
         setLoading(false)
       }

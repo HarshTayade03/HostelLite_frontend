@@ -22,9 +22,15 @@ export default function AdminStudents() {
   const fetchStudents = async () => {
     try {
       const res = await api.get('/users?role=STUDENT')
-      setData(res.data.data.users)
+      
+      // DEFENSIVE: Handle potential variation in MongoDB response structure
+      const students = res.data?.data?.users || res.data?.users || []
+      setData(students)
+      
+      console.log('Student Directory Sync:', { status: 'Success', count: students.length });
     } catch (err) {
-      console.error('Failed to fetch students', err)
+      console.error('CRITICAL: Failed to fetch students from MongoDB:', err.response?.data || err.message)
+      setData([]) // Fallback to empty array to avoid table crash
     }
   }
 
