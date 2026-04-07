@@ -17,9 +17,8 @@ export const AuthProvider = ({ children }) => {
         const { data } = await api.get('/users/me');
         setUser(data.data.user);
       } catch (error) {
-        // If 401 Unauthorized, it means cookie lacks or is invalid
-        console.error("JWT compromised, expired, or missing. Logging out automatically.");
-        setUser(null);
+        // Log the error but don't force a user state clear automatically
+        console.warn("Session check failed, keeping current local user state if any.");
       } finally {
         setLoading(false);
       }

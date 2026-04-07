@@ -9,16 +9,11 @@ const api = axios.create({
   },
 });
 
-// Response Interceptor: Automatically redirect to login on 401 Unauthorized
+// Response Interceptor: Disabled automatic redirect for better debugging/CORS handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Only redirect if we're not already on the login page
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
-    }
+    // We let the application handle the error instead of force-redirecting the entire page
     return Promise.reject(error);
   }
 );
